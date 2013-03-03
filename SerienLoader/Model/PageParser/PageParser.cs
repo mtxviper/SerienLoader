@@ -1,9 +1,4 @@
-using System;
-using System.Collections.Generic;
-using HtmlAgilityPack;
-using SerienLoader.Model;
-
-namespace SerienLoader
+namespace SerienLoader.Model.PageParser
 {
     public class PageParser
     {
