@@ -14,7 +14,27 @@
             <RowDefinition Height="*"></RowDefinition>
         </Grid.RowDefinitions>
             <StackPanel Grid.Row="0" Orientation="Vertical">
+         <StackPanel Orientation="Horizontal">
+            <Label>Shows:</Label>
+            <ComboBox ItemsSource="{Binding ShowNameList}" SelectedValue="{Binding SelectedShowName}" />
+         </StackPanel>
+         <StackPanel Orientation="Horizontal">
+            <Label>Seasons:</Label>
+            <ComboBox ItemsSource="{Binding SeasonList}" SelectedValue="{Binding SelectedSeason}" />
+         </StackPanel>
+         <StackPanel Orientation="Horizontal">
+            <Label>Format:</Label>
+            <ComboBox ItemsSource="{Binding FormatList}" SelectedValue="{Binding SelectedFormat}" />
+         </StackPanel>
+  <StackPanel Orientation="Horizontal">
+            <Label>Hoster:</Label>
+            <ComboBox ItemsSource="{Binding HosterList}" SelectedValue="{Binding SelectedHoster}" />
+         </StackPanel>
+<StackPanel Orientation="Horizontal">
             <Button Command="{Binding ReadExistingEpisodesCommand}" Content="Read Folders"></Button>
+            <Button Command="{Binding ParseSelectedShowCommand}" Content="ParseSelectedShow"></Button>
+         </StackPanel>
+        
          <TreeView ItemsSource="{Binding Shows}" Margin="10">
             <TreeView.ItemTemplate>
                <DataTemplate>

@@ -7,13 +7,14 @@ using System.Text;
 using System.Windows.Input;
 using SerienLoader.Annotations;
 using SerienLoader.Model;
+using SerienLoader.Model.PageParser;
 using SerienLoader.Utility;
 
 namespace SerienLoader.ViewModel
 {
    internal class MainViewModel : INotifyPropertyChanged
    {
-      private string _log;
+     
 
       public string Log
       {
@@ -25,8 +26,10 @@ namespace SerienLoader.ViewModel
             OnPropertyChanged("Log");
          }
       }
+      private string _log;
 
-      private ObservableCollection<Show> _shows;
+
+
 
       public ObservableCollection<Show> Shows
       {
@@ -38,25 +41,131 @@ namespace SerienLoader.ViewModel
             OnPropertyChanged("Shows");
          }
       }
+      private ObservableCollection<Show> _shows;
+
+      public ObservableCollection<string> ShowNameList { get; set; }
+      public string SelectedShowName
+      {
+         get { return _selectedShowName; }
+         set
+         {
+            if (value == _selectedShowName) return;
+            _selectedShowName = value;
+            OnPropertyChanged("SelectedShowName");
+           
+         }
+      }
+      private string _selectedShowName;
+
+      public ObservableCollection<string> SeasonList { get; set; }
+      public string SelectedSeason
+      {
+         get { return _selectedSeason; }
+         set
+         {
+            if (value == _selectedSeason) return;
+            _selectedSeason = value;
+
+            OnPropertyChanged("SelectedSeason");
+            SelectedSeasonChanged();
+         }
+      }
+
+      private void SelectedSeasonChanged()
+      {
+         HosterList.Clear();
+      
+         FormatList.Clear();
+         foreach (Episode episode in _seasonNameToSeason[SelectedSeason].Episodes.Values)
+         {
+            foreach (Link link in episode.Links)
+            {
+               if (!HosterList.Contains(link.Hoster.Name))
+               {
+                  HosterList.Add(link.Hoster.Name);
+               }
+        
+               if (!FormatList.Contains(link.CombinedFormat))
+               {
+                  FormatList.Add(link.CombinedFormat);
+               }
+
+            }
+         }
+      }
+
+      private string _selectedSeason;
+
+      public ObservableCollection<string> FormatList { get; set; }
+      public string SelectedFormat { get; set; }
+
+      public ObservableCollection<string> HosterList { get; set; }
+      public string SelectedHoster { get; set; }
 
       public ICommand ReadExistingEpisodesCommand { get; set; }
+      public ICommand ParseSelectedShowCommand { get; set; }
       public MainModel Model { get; set; }
+
+      private Dictionary<string,Season> _seasonNameToSeason=new Dictionary<string, Season>();
+ 
 
       public MainViewModel()
       {
          Model = new MainModel();
          Shows=new ObservableCollection<Show>();
+         ShowNameList=new ObservableCollection<string>();
+         SeasonList=new ObservableCollection<string>();
+         FormatList= new ObservableCollection<string>();
+         HosterList = new ObservableCollection<string>();
+
+
+
+
          ReadExistingEpisodesCommand = new RelayCommand(ReadExistingEpisodes);
+         ParseSelectedShowCommand = new RelayCommand(ParseSelectedShow,x=>SelectedShowName!=null);
+
+         ShowNameList.Add("Californication");
+         ShowNameList.Add("Dexter");
+         SelectedShowName = "Dexter";
+      }
+
+      private void ParseSelectedShow(object obj)
+      {
+         SeasonList.Clear();
+
+         var serienJunkiesPageParser = new SerienJunkiesPageParser(SelectedShowName);
+
+         foreach (Season season in serienJunkiesPageParser.Seasons)
+         {
+            string seasonName=null;
+            if (season.Language == Language.English)
+            {
+               seasonName = Season.EnglishSeason + " " + season.Number;
+            }
+            else if (season.Language == Language.German)
+            {
+               seasonName = Season.GermanSeason + " " + season.Number;
+            }
+            if (seasonName != null)
+            {
+               SeasonList.Add(seasonName);
+               _seasonNameToSeason[seasonName] = season;
+            }
+         }
+           
+         
       }
 
       private void ReadExistingEpisodes(object obj)
       {
-         Model.ReadExistingEpisodes(new List<string> {@"E:\Serien\", @"F:\Serien\"});
-         Log = Logger.LogString;
-         foreach (KeyValuePair<string, Show> keyValuePair in Model.SerienFolderReader.Shows)
-         {
-            Shows.Add(keyValuePair.Value);
-         }
+         //Model.ReadExistingEpisodes(new List<string> {@"E:\Serien\", @"F:\Serien\"});
+         //Log = Logger.LogString;
+         //foreach (KeyValuePair<string, Show> keyValuePair in Model.SerienFolderReader.Shows)
+         //{
+         //   Shows.Add(keyValuePair.Value);
+
+         //}
+         
       }
 
       
