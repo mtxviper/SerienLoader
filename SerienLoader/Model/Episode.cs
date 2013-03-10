@@ -10,7 +10,7 @@ namespace SerienLoader.Model
             Season = season;
             Number = number;
             Title = title;          
-            Urls = new List<string>();
+            Links = new List<Link>();
         }
 
         public string Title { get; set; }
@@ -23,6 +23,6 @@ namespace SerienLoader.Model
 
         public FileInfo File { get; set; }
 
-        public IList<string> Urls { get; set; }
+        public IList<Link> Links { get; set; }
     }
 }

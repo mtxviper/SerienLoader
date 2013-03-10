@@ -10,16 +10,19 @@ namespace SerienLoader.Model
    {
       private static readonly IList<string> VideoFileExtensions = new List<string> {".avi", ".mkv", ".mpg", ".mp4"};
 
-      public Season(Show show, int number)
+      public Season(Show show, int number, Language language)
       {
          Show = show;
          Number = number;
+         Language = language;
          Episodes = new Dictionary<int, Episode>();
       }
 
       public int Number { get; set; }
       public Show Show { get; set; }
       public IDictionary<int, Episode> Episodes { get; set; }
+
+      public Language Language { get; set; }
 
       public void AddEpisodes(DirectoryInfo folder)
       {
@@ -58,5 +61,8 @@ namespace SerienLoader.Model
             }
          }
       }
+
+      public const string EnglishSeason = "Season";
+      public const string GermanSeason = "Staffel";
    }
 }
